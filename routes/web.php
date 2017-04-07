@@ -16,3 +16,5 @@ Route::get('get-updates',   'TelegramController@getUpdates');
 Route::get('getMe',   'TelegramController@getMe');
 Route::get('send',  'TelegramController@getSendMessage');
 Route::post('send', 'TelegramController@postSendMessage');
+
+Route::post('newMessage', 'TelegramController@newMessage');
