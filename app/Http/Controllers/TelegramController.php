@@ -6,6 +6,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Telegram\Bot\Laravel\Facades\Telegram;
 
+use LaravelFCM\Message\OptionsBuilder;
+use LaravelFCM\Message\PayloadDataBuilder;
+use LaravelFCM\Message\PayloadNotificationBuilder;
+use FCM;
+
 class TelegramController extends Controller
 {
   public function getHome()
@@ -17,6 +22,27 @@ class TelegramController extends Controller
     {
         $updates = Telegram::getUpdates();
         dd($updates);
+    }
+
+    public function enviarNotificacionPushAdministrador($nombre)
+    {
+      $optionBuiler = new OptionsBuilder();
+      $optionBuiler->setTimeToLive(60*20);
+
+      $notificationBuilder = new PayloadNotificationBuilder('Un usuario necesita asistencia');
+      $notificationBuilder->setBody($nombre)
+      				    ->setSound('default');
+
+
+      $option = $optionBuiler->build();
+      $notification = $notificationBuilder->build();
+      // $data = $dataBuilder->build();
+
+      $token = "finWAZMaFeQ:APA91bFVOn8KrFjnl9IelhWId7KL449pIGZ8ey2dhjoUSyk2j72XODqF8r2AT1HUwdinqK7xwFSqmGj5eTYRMvjpXAWpJ1JiHQGV5af67aQ3yHa_Cbo1GonzAYbEaMAtiZXle5fLrFAD";
+
+      $downstreamResponse = FCM::sendTo($token, $option, $notification);
+      return "Éxito";
+
     }
 
     public function newMessage(Request $request){
@@ -48,7 +74,8 @@ class TelegramController extends Controller
                 $respuesta = "La clave del candado es 460";
                 break;
             case "/asistencia":
-                $nombre = $entrada['message']['chat']['first_name'];
+                $nombre = $entrada['message']['chat']['first_name']." ".$entrada['message']['chat']['last_name'];
+                $this->enviarNotificacionPushAdministrador($nombre);
                 $respuesta = "Hemos recibido tu solicitud y nos pondremos en contacto contigo lo más pronto posible ".$nombre;
                 break;
             default:

@@ -18,3 +18,6 @@ Route::get('send',  'TelegramController@getSendMessage');
 Route::post('send', 'TelegramController@postSendMessage');
 
 Route::post('newMessage', 'TelegramController@newMessage');
+
+
+Route::get('enviarNotificacionPushAdministrador', 'TelegramController@enviarNotificacionPushAdministrador');
